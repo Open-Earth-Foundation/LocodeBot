@@ -1,3 +1,4 @@
 sparqlwrapper
 shapely
 geopy
+pywikibot
