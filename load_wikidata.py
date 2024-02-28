@@ -5,6 +5,7 @@ def main(inputfile):
   # Login to Wikidata
   site = pywikibot.Site("wikidata", "wikidata")
   site.login()
+  repo = site.data_repository()
 
   with open(inputfile, 'r') as f:
     reader = DictReader(f)
@@ -23,12 +24,21 @@ def main(inputfile):
           print(f"Item {wikidata_id} already has a LOCODE value.")
           continue  # Skip to the next row in the CSV
 
+
       # Creating a new claim for LOCODE
       claim = pywikibot.Claim(site, locode_property)
       claim.setTarget(locode)
-      page.addClaim(claim, summary='Adding UN/LOCODE')
-
-      print(f"Added UN/LOCODE {locode} to {wikidata_id}.")
+      country_code = locode[:2].lower()
+      reference_url = f'https://service.unece.org/trade/locode/{country_code}.htm'
+      reference = pywikibot.Claim(site, 'P854')
+      reference.setTarget(reference_url)
+      claim.addSources([reference])
+      try:
+        page.addClaim(claim, summary='Adding UN/LOCODE')
+        print(f"Added UN/LOCODE {locode} to {wikidata_id}.")
+      except Exception as e:
+        print(f"Error adding UN/LOCODE {locode} to {wikidata_id}: {e}")
+        continue
 
 if __name__ == "__main__":
   import argparse
