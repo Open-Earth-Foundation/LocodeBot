@@ -11,6 +11,11 @@ def main(inputfile):
     reader = DictReader(f)
     for row in reader:
       locode = row['LOCODE']
+
+      if locode[0:2] == 'IT':
+        print(f"Skipping {locode} because Italy is complicated.")
+        continue
+
       wikidata_id = row['wikidata_id']
 
       page = pywikibot.ItemPage(site, wikidata_id)
