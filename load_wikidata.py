@@ -19,7 +19,15 @@ def main(inputfile):
       wikidata_id = row['wikidata_id']
 
       page = pywikibot.ItemPage(site, wikidata_id)
-      page.get()
+
+      try:
+        page.get()
+      except pywikibot.exceptions.IsRedirectPageError:
+        print(f"Item {wikidata_id} is a redirect.")
+        continue
+      except Exception as e:
+        print(f"Error getting item {wikidata_id}: {e}")
+        continue
 
       # Property for UN/LOCODE
       locode_property = 'P1937'
